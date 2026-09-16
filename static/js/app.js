@@ -1,14 +1,15 @@
 /* =========================================================
    COMO ARROZ - APP.JS
-   Menú digital + carrito + pedido registrado en Django.
+   Menú digital + carrito + pedidos por WhatsApp
 
    IMPORTANTE: este archivo depende de la variable global
-   `productos`, poblada de forma asíncrona por productos.js
-   (fetch a /api/menu/productos/). Debe cargarse así en el HTML:
+   `productos`, definida en productos.js. Debe cargarse así
+   en el HTML:
      <script src="js/productos.js"></script>
      <script src="js/app.js"></script>
    ========================================================= */
 
+const NUMERO_WHATSAPP = "573224047068";
 const CLAVE_STORAGE_CARRITO = "comoarroz_carrito";
 
 /* =========================================================
@@ -81,27 +82,50 @@ function escaparHTML(valor) {
 }
 
 function nombreCategoria(categoria) {
-    const boton = document.querySelector(`.categoria-btn[data-categoria="${categoria}"] span`);
-    return boton ? boton.textContent : categoria;
+    const nombres = {
+        arroces: "Arroces",
+        espaguetis: "Espaguetis",
+        carnes: "Carnes a la Plancha",
+        hamburguesas: "Hamburguesas y Comidas Rápidas",
+        mazorcadas: "Mazorcadas",
+        "chop-suey": "Chop Suey",
+        bebidas: "Bebidas",
+        adicionales: "Adicionales",
+        entradas: "Entradas"
+    };
+    return nombres[categoria] || categoria;
 }
 
 function iconoCategoria(categoria) {
-    const icono = document.querySelector(`.categoria-btn[data-categoria="${categoria}"] i`);
-    return icono ? icono.className.replace("bi ", "") : "bi-egg-fried";
+    const iconos = {
+        arroces: "bi-egg-fried",
+        espaguetis: "bi-egg",
+        carnes: "bi-fire",
+        hamburguesas: "bi-burger",
+        mazorcadas: "bi-circle",
+        "chop-suey": "bi-bowl-hot",
+        bebidas: "bi-cup-straw",
+        adicionales: "bi-plus-circle",
+        entradas: "bi-box2-heart"
+    };
+    return iconos[categoria] || "bi-egg-fried";
 }
 
-// Con más de una variante mostramos el selector; con una sola (ej. "Única")
-// se agrega directo, igual que antes con los productos de precio fijo.
 function tieneVariantes(producto) {
-    return Array.isArray(producto.variantes) && producto.variantes.length > 1;
+    return Array.isArray(producto.variantes) && producto.variantes.length > 0;
 }
 
 function precioDesde(producto) {
-    return Math.min(...producto.variantes.map(variante => variante.precio));
+    return tieneVariantes(producto)
+        ? Math.min(...producto.variantes.map(variante => variante.precio))
+        : producto.precio;
 }
 
-function obtenerCSRFToken() {
-    return document.querySelector('input[name="csrfmiddlewaretoken"]')?.value || "";
+function obtenerLineaId(id, variante = null) {
+    const texto = variante
+        ? String(variante).toLowerCase().trim().replace(/\s+/g, "-")
+        : "normal";
+    return `${id}-${texto}`;
 }
 
 function obtenerProductoPorId(id) {
@@ -112,7 +136,7 @@ function obtenerProductoPorId(id) {
    MOSTRAR PRODUCTOS
    ========================================================= */
 
-function mostrarProductos(categoria) {
+function mostrarProductos(categoria = "arroces") {
     if (!contenedorProductos) return;
 
     const lista = productos.filter(producto => producto.categoria === categoria);
@@ -144,9 +168,7 @@ function crearTarjetaProducto(producto) {
 
     const precioHTML = tieneVariantes(producto)
         ? `Desde ${formatoPrecio(precioDesde(producto))}`
-        : formatoPrecio(precioDesde(producto));
-
-    const tieneImagen = Boolean(producto.imagen);
+        : formatoPrecio(producto.precio);
 
     const tarjeta = document.createElement("div");
     tarjeta.className = "col-12 col-sm-6 col-lg-4";
@@ -154,7 +176,6 @@ function crearTarjetaProducto(producto) {
     tarjeta.innerHTML = `
         <div class="producto-card">
             <div class="producto-imagen">
-                ${tieneImagen ? `
                 <img
                     src="${producto.imagen}"
                     alt="${nombre}"
@@ -163,8 +184,8 @@ function crearTarjetaProducto(producto) {
                     decoding="async"
                     width="1200"
                     height="800"
-                >` : ""}
-                <div class="producto-imagen-placeholder" style="${tieneImagen ? "display:none;" : "display:flex;"}">
+                >
+                <div class="producto-imagen-placeholder" style="display:none;">
                     <i class="bi ${iconoCategoria(producto.categoria)}"></i>
                     <span>Foto del plato</span>
                 </div>
@@ -183,15 +204,18 @@ function crearTarjetaProducto(producto) {
         </div>
     `;
 
-    // Si la imagen real falla en tiempo de carga, caemos al placeholder.
-    if (tieneImagen) {
-        const img = tarjeta.querySelector(".producto-foto");
-        img.addEventListener("error", function manejarErrorImagen() {
+    // Fallback de imagen (WebP -> JPG -> placeholder) sin usar onerror inline en el HTML.
+    const img = tarjeta.querySelector(".producto-foto");
+    img.addEventListener("error", function manejarErrorImagen() {
+        if (img.dataset.fallback !== "1") {
+            img.dataset.fallback = "1";
+            img.src = producto.imagenOriginal;
+        } else {
             img.removeEventListener("error", manejarErrorImagen);
             img.style.display = "none";
             img.nextElementSibling.style.display = "flex";
-        });
-    }
+        }
+    });
 
     // Agregar al carrito sin usar onclick inline.
     tarjeta.querySelector(".btn-agregar").addEventListener("click", () => {
@@ -265,10 +289,7 @@ function confirmarVariante() {
     if (!seleccionado) return;
 
     const variante = productoPendiente.variantes[Number(seleccionado.value)];
-    agregarLineaAlCarrito({
-        tipo: "producto", id: productoPendiente.id, varianteId: variante.id, varianteNombre: variante.nombre,
-        nombre: productoPendiente.nombre, precio: variante.precio,
-    });
+    agregarProductoAlCarrito(productoPendiente, variante.nombre, variante.precio);
 
     if (modalVariantes) modalVariantes.hide();
     productoPendiente = null;
@@ -287,25 +308,26 @@ function agregarAlCarrito(id) {
         return;
     }
 
-    // Una sola variante (ej. "Única"): se agrega directo, sin mostrar selector.
-    const unica = producto.variantes[0];
-    agregarLineaAlCarrito({
-        tipo: "producto", id: producto.id, varianteId: unica.id, varianteNombre: null,
-        nombre: producto.nombre, precio: unica.precio,
-    });
+    agregarProductoAlCarrito(producto);
     mostrarCarrito();
 }
 
-// El backend recalcula el precio real a partir de varianteId (o del combo);
-// lo que viaja aquí es solo para mostrar el carrito al cliente.
-function agregarLineaAlCarrito({ tipo, id, varianteId, varianteNombre, nombre, precio }) {
-    const lineaId = `${tipo}-${id}-${varianteId ?? "normal"}`;
+function agregarProductoAlCarrito(producto, variante = null, precio = null) {
+    const precioFinal = precio ?? producto.precio;
+    const lineaId = obtenerLineaId(producto.id, variante);
     const existente = carrito.find(item => item.lineaId === lineaId);
 
     if (existente) {
         existente.cantidad++;
     } else {
-        carrito.push({ lineaId, tipo, id, varianteId, varianteNombre, nombre, precio, cantidad: 1 });
+        carrito.push({
+            lineaId,
+            id: producto.id,
+            nombre: producto.nombre,
+            variante,
+            precio: precioFinal,
+            cantidad: 1
+        });
     }
 
     actualizarCarrito();
@@ -375,7 +397,7 @@ function actualizarCarrito() {
         item.innerHTML = `
             <div class="carrito-item-info">
                 <div class="carrito-item-nombre">${escaparHTML(producto.nombre)}</div>
-                ${producto.varianteNombre ? `<div class="carrito-item-variante">${escaparHTML(producto.varianteNombre)}</div>` : ""}
+                ${producto.variante ? `<div class="carrito-item-variante">${escaparHTML(producto.variante)}</div>` : ""}
                 <div class="carrito-item-precio">${formatoPrecio(producto.precio)} c/u</div>
                 <div class="cantidad-control">
                     <button class="cantidad-btn" type="button" data-accion="disminuir" aria-label="Disminuir cantidad">
@@ -443,18 +465,18 @@ botonesCategoria.forEach(boton => {
 
 /* =========================================================
    COMBO
-   (El precio/nombre viajan en data-* del botón, tomados del
-   Combo activo que Django renderizó en el HTML.)
+   (Antes duplicaba a mano la lógica de agregarProductoAlCarrito
+   y usaba un precio distinto al mostrado en el HTML. Ahora el
+   combo es un producto más — con UN solo precio, definido en
+   productos.js — y reutiliza la misma función que todo lo demás.)
    ========================================================= */
 
 if (btnCombo) {
     btnCombo.addEventListener("click", () => {
-        const id = btnCombo.dataset.comboId;
-        const nombre = btnCombo.dataset.nombre;
-        const precio = Number(btnCombo.dataset.precio);
-        if (!id || !nombre || Number.isNaN(precio)) return;
+        const combo = obtenerProductoPorId(100);
+        if (!combo) return;
 
-        agregarLineaAlCarrito({ tipo: "combo", id, varianteId: null, varianteNombre: null, nombre, precio });
+        agregarProductoAlCarrito(combo);
         mostrarCarrito();
     });
 }
@@ -501,9 +523,6 @@ document.querySelectorAll('input[name="metodoPago"]').forEach(opcion => {
     opcion.addEventListener("change", () => {
         const alerta = document.getElementById("alertaTarjeta");
         if (alerta) alerta.style.display = opcion.value === "tarjeta" ? "flex" : "none";
-
-        const transferencia = document.getElementById("datosTransferencia");
-        if (transferencia) transferencia.style.display = opcion.value === "transferencia" ? "block" : "none";
     });
 });
 
@@ -593,48 +612,56 @@ function validarPedido() {
 }
 
 /* =========================================================
-   ENVIAR PEDIDO
-   Crea el pedido en Django vía fetch (multipart, por el
-   comprobante). El backend recalcula precios desde la BD.
+   WHATSAPP
    ========================================================= */
 
-function construirFormDataPedido() {
-    const tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
-    const metodoPago = document.querySelector('input[name="metodoPago"]:checked').value;
+function generarMensajeWhatsApp() {
+    const tipoPedido = document.querySelector('input[name="tipoPedido"]:checked')?.value;
+    const metodoPago = document.querySelector('input[name="metodoPago"]:checked')?.value;
 
-    const formData = new FormData();
-    formData.append("cliente_nombre", valorCampo("clienteNombre"));
-    formData.append("cliente_telefono", valorCampo("clienteTelefono"));
-    formData.append("tipo_pedido", tipoPedido);
-    formData.append("metodo_pago", metodoPago);
-    formData.append("observaciones", valorCampo("clienteObservaciones"));
+    if (!tipoPedido || !metodoPago) return "";
+
+    const total = calcularTotal();
+
+    let mensaje = "Hola, Como Arroz 👋\n\nQuiero realizar el siguiente pedido:\n\n";
+
+    carrito.forEach(producto => {
+        const variante = producto.variante ? ` — ${producto.variante}` : "";
+        const subtotal = producto.precio * producto.cantidad;
+        mensaje += `🍽️ ${producto.nombre}${variante} x${producto.cantidad} — ${formatoPrecio(subtotal)}\n`;
+    });
+
+    mensaje += `\n💰 TOTAL: ${formatoPrecio(total)}\n\n`;
 
     if (tipoPedido === "domicilio") {
-        formData.append("direccion", valorCampo("clienteDireccion"));
-        formData.append("barrio", valorCampo("clienteBarrio"));
-        formData.append("referencia", valorCampo("clienteReferencia"));
+        mensaje += "🛵 TIPO DE PEDIDO: DOMICILIO\n\n";
+        mensaje += `👤 Nombre: ${valorCampo("clienteNombre")}\n`;
+        mensaje += `📞 Teléfono: ${valorCampo("clienteTelefono")}\n`;
+        mensaje += `🏠 Dirección: ${valorCampo("clienteDireccion")}\n`;
+        mensaje += `📍 Barrio: ${valorCampo("clienteBarrio")}\n`;
+
+        const referencia = valorCampo("clienteReferencia");
+        if (referencia) mensaje += `📌 Referencia: ${referencia}\n`;
     } else {
-        formData.append("punto_recogida", document.getElementById("puntoRecogida")?.value || "");
+        mensaje += "🏪 TIPO DE PEDIDO: RECOGER EN EL RESTAURANTE\n\n";
+        mensaje += `👤 Nombre: ${valorCampo("clienteNombre")}\n`;
+        mensaje += `📞 Teléfono: ${valorCampo("clienteTelefono")}\n`;
+        mensaje += `📍 Punto de recogida: ${document.getElementById("puntoRecogida")?.value || ""}\n`;
     }
 
-    const archivoComprobante = document.getElementById("comprobantePago")?.files[0];
-    if (archivoComprobante) formData.append("comprobante", archivoComprobante);
+    const nombresPago = { efectivo: "Efectivo", transferencia: "Transferencia", tarjeta: "Tarjeta" };
+    mensaje += `\n💳 FORMA DE PAGO: ${nombresPago[metodoPago] || metodoPago}\n`;
 
-    const lineas = carrito.map(item => ({
-        tipo: item.tipo,
-        id: item.id,
-        variante_id: item.varianteId,
-        cantidad: item.cantidad,
-    }));
-    formData.append("carrito", JSON.stringify(lineas));
+    const observaciones = valorCampo("clienteObservaciones");
+    if (observaciones) mensaje += `\n📝 Observaciones: ${observaciones}\n`;
 
-    return formData;
+    return mensaje + "\n¿Me confirman el pedido, por favor? 😊";
 }
 
-const btnEnviarPedido = document.getElementById("btnEnviarPedido");
+const btnEnviarWhatsApp = document.getElementById("btnEnviarWhatsApp");
 
-if (btnEnviarPedido) {
-    btnEnviarPedido.addEventListener("click", async () => {
+if (btnEnviarWhatsApp) {
+    btnEnviarWhatsApp.addEventListener("click", () => {
         if (!validarPedido()) return;
 
         if (carrito.length === 0) {
@@ -642,32 +669,19 @@ if (btnEnviarPedido) {
             return;
         }
 
-        btnEnviarPedido.disabled = true;
-
-        try {
-            const respuesta = await fetch("/pedidos/crear/", {
-                method: "POST",
-                headers: { "X-CSRFToken": obtenerCSRFToken() },
-                body: construirFormDataPedido(),
-            });
-
-            const datos = await respuesta.json();
-
-            if (!respuesta.ok || !datos.ok) {
-                mostrarError(datos.error || "No pudimos registrar tu pedido. Intenta de nuevo.");
-                btnEnviarPedido.disabled = false;
-                return;
-            }
-
-            carrito = [];
-            actualizarCarrito();
-            modalPedido?.hide();
-            window.location.href = datos.redirect_url;
-        } catch (error) {
-            console.error(error);
-            mostrarError("No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.");
-            btnEnviarPedido.disabled = false;
+        const mensaje = generarMensajeWhatsApp();
+        if (!mensaje) {
+            mostrarError("No fue posible generar el pedido.");
+            return;
         }
+
+        const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+
+        // Pedido enviado: limpiamos el carrito para el próximo pedido.
+        carrito = [];
+        actualizarCarrito();
+        modalPedido?.hide();
     });
 }
 
@@ -683,23 +697,9 @@ if (modalPedidoElement) {
    INICIAR
    ========================================================= */
 
-async function iniciarApp() {
-    try {
-        await cargarProductos();
-    } catch (error) {
-        console.error(error);
-        if (contenedorProductos) {
-            contenedorProductos.innerHTML =
-                '<p class="text-center text-white-50 py-5">No se pudo cargar el menú. Intenta recargar la página.</p>';
-        }
-        return;
-    }
+botonesCategoria.forEach(boton => {
+    if (boton.dataset.categoria === "arroces") boton.classList.add("activo");
+});
 
-    const primerBoton = botonesCategoria[0];
-    if (primerBoton) primerBoton.classList.add("activo");
-
-    mostrarProductos(primerBoton ? primerBoton.dataset.categoria : "arroces");
-    actualizarCarrito();
-}
-
-iniciarApp();
+mostrarProductos("arroces");
+actualizarCarrito();

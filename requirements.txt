@@ -1,6 +1,9 @@
 Django==5.1.2
 Pillow==12.3.0
-gunicorn
-dj-database-url
-psycopg[binary]
-whitenoise
+gunicorn==26.2.0
+whitenoise==6.12.0
+dj-database-url==3.1.2
+psycopg2-binary==2.9.13
+django-cloudinary-storage==0.3.0
+cloudinary==1.46.2
+python-dotenv==1.2.3

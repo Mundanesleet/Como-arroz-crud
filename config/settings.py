@@ -13,38 +13,39 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Carga variables desde un archivo .env local si existe (desarrollo).
+# En Render las variables se configuran directamente en su dashboard,
+# así que ahí este archivo simplemente no existe y no hace nada.
+load_dotenv(BASE_DIR / '.env')
 
 
 # ============================================================
 # SECURITY
 # ============================================================
 
-# En producción se utiliza la variable de entorno de Render.
-# Si trabajas localmente y no existe, se utiliza una clave
-# solamente para desarrollo.
+# En producción se utiliza la variable de entorno DJANGO_SECRET_KEY
+# (configurada en Render). Si no existe, se usa una clave de desarrollo.
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
-    'django-insecure-development-only-change-this-key'
+    'django-insecure-development-only-change-this-key',
 )
 
-# DEBUG será False en Render porque allí configuramos:
-# DJANGO_DEBUG=False
+# DEBUG será False en Render porque allí configuramos DJANGO_DEBUG=False.
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() == 'true'
 
-
 # Hosts permitidos.
-#
-# En Render:
-# DJANGO_ALLOWED_HOSTS=como-arroz-crud.onrender.com
-#
+# En Render: DJANGO_ALLOWED_HOSTS=como-arroz-crud.onrender.com
 # Localmente se mantienen los hosts habituales.
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         'DJANGO_ALLOWED_HOSTS',
-        'localhost,127.0.0.1,testserver'
+        'localhost,127.0.0.1,testserver',
     ).split(',')
     if host.strip()
 ]
@@ -54,13 +55,12 @@ ALLOWED_HOSTS = [
 # CSRF
 # ============================================================
 
-# En Render:
-# DJANGO_CSRF_TRUSTED_ORIGINS=https://como-arroz-crud.onrender.com
+# En Render: DJANGO_CSRF_TRUSTED_ORIGINS=https://como-arroz-crud.onrender.com
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         'DJANGO_CSRF_TRUSTED_ORIGINS',
-        ''
+        '',
     ).split(',')
     if origin.strip()
 ]
@@ -82,6 +82,14 @@ INSTALLED_APPS = [
     'pedidos',
     'cuentas',
 ]
+
+# NOTA: 'cloudinary_storage' y 'cloudinary' NO se agregan a INSTALLED_APPS
+# a propósito. django-cloudinary-storage sobreescribe el comando
+# `collectstatic` de una forma incompatible con Django 5.1 (revisa
+# `settings.STATICFILES_STORAGE`, que ya no existe como atributo en esta
+# versión de Django, y truena con AttributeError). No hace falta que la
+# app esté instalada para usar su clase de storage: Django la importa
+# directamente desde el string en STORAGES más abajo.
 
 
 # ============================================================
@@ -131,11 +139,8 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # DATABASE
 # ============================================================
 
-# Si existe DATABASE_URL, Django utiliza PostgreSQL de Neon.
-#
-# Si no existe DATABASE_URL, se mantiene SQLite para poder
-# trabajar localmente sin necesidad de Neon.
-
+# Si existe DATABASE_URL (Neon en producción), Django usa PostgreSQL.
+# Si no existe, se usa SQLite localmente, igual que siempre.
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
@@ -148,7 +153,6 @@ if DATABASE_URL:
             conn_health_checks=True,
         )
     }
-
 else:
     DATABASES = {
         'default': {
@@ -198,22 +202,73 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'static'
+    BASE_DIR / 'static',
 ]
 
-# Carpeta donde collectstatic reunirá los archivos estáticos
-# para producción.
+# Carpeta donde collectstatic reúne los archivos estáticos en producción.
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ============================================================
-# MEDIA FILES
+# MEDIA FILES (fotos de productos/combos, comprobantes de pago)
 # ============================================================
 
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Si existe CLOUDINARY_URL, los archivos subidos se guardan en Cloudinary
+# en vez del disco del servidor (obligatorio en Render: su disco no es
+# persistente y se borra en cada redeploy). Sin esta variable, se usa el
+# disco local — así sigue funcionando igual en desarrollo.
+CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+
+
+# ============================================================
+# STORAGES (Django 5.1: forma moderna de configurar static/media)
+# ============================================================
+#
+# IMPORTANTE: STATICFILES_STORAGE y DEFAULT_FILE_STORAGE (los settings
+# "viejos") ya NO se leen en Django 5.1 — asignarlos directamente no
+# tiene ningún efecto y falla en silencio (esto era exactamente el bug
+# que dejaba WhiteNoise sin activarse de verdad). Todo se configura acá.
+
+STORAGES = {
+    'default': {
+        'BACKEND': (
+            'cloudinary_storage.storage.MediaCloudinaryStorage'
+            if CLOUDINARY_URL else
+            'django.core.files.storage.FileSystemStorage'
+        ),
+    },
+    'staticfiles': {
+        # El storage con manifest (comprimido, con hash en el nombre del
+        # archivo) requiere haber corrido collectstatic antes. Se usa
+        # solo cuando DEBUG=False (producción); en local se mantiene el
+        # storage normal para no exigir un paso extra en cada cambio.
+        'BACKEND': (
+            'whitenoise.storage.CompressedManifestStaticFilesStorage'
+            if not DEBUG else
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+        ),
+    },
+}
+
+
+# ============================================================
+# SEGURIDAD EN PRODUCCIÓN (detrás del proxy de Render)
+# ============================================================
+
+if not DEBUG:
+    # Render termina el SSL en su proxy y reenvía por HTTP interno con
+    # esta cabecera; sin esto Django cree que la conexión no es segura
+    # y entra en loop de redirects con SECURE_SSL_REDIRECT.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # 30 días, sin subdominios ni preload (Render no tiene subdominios
+    # propios que dependan de esto; valor conservador de partida).
+    SECURE_HSTS_SECONDS = 2592000
 
 
 # ============================================================
@@ -221,7 +276,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ============================================================
 
 LOGIN_URL = 'panel_login'
-
 LOGIN_REDIRECT_URL = 'post_login_redirect'
 
 

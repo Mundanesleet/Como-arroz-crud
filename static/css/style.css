@@ -1093,7 +1093,7 @@ textarea:focus-visible {
     margin-bottom: 30px;
 }
 
-.btn-whatsapp {
+.btn-confirmar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1112,7 +1112,7 @@ textarea:focus-visible {
     transition: var(--transicion);
 }
 
-.btn-whatsapp:hover {
+.btn-confirmar:hover {
     background-color: transparent;
     color: #25d366;
 
@@ -1121,7 +1121,7 @@ textarea:focus-visible {
     transform: translateY(-3px);
 }
 
-.btn-whatsapp i {
+.btn-confirmar i {
     font-size: 1.1rem;
 }
 

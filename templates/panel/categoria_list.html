@@ -1,0 +1,37 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Categorías{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Categorías</h1>
+    <a href="{% url 'menu_panel:categoria_create' %}" class="btn btn-rojo"><i class="bi bi-plus-lg me-1"></i>Nueva categoría</a>
+</div>
+
+<div class="panel-card">
+    <div class="lista-con-borde">
+        {% for categoria in categorias %}
+        <div class="item-con-borde">
+            <div class="item-con-borde-foto-vacia"><i class="bi {{ categoria.icono }}"></i></div>
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    {{ categoria.nombre }}
+                    {% if categoria.activa %}
+                        <span class="badge badge-activo ms-1">Activa</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">Inactiva</span>
+                    {% endif %}
+                </div>
+                <div class="item-con-borde-meta">Orden {{ categoria.orden }} · {{ categoria.productos.count }} producto{{ categoria.productos.count|pluralize }}</div>
+            </div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'menu_panel:categoria_update' categoria.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-pencil me-1"></i>Editar</a>
+                <a href="{% url 'menu_panel:categoria_delete' categoria.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Eliminar</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay categorías todavía.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Hola, {{ request.user.first_name|default:request.user.username }}</h1>
+</div>
+
+<div class="panel-seccion-titulo">Hoy</div>
+<div class="stat-grid">
+    <a href="{% url 'pedidos_panel:pedido_list' %}?estado_pedido=pendiente" class="stat-tile acento-rojo">
+        <div class="stat-valor">{{ metricas.pendientes }}</div>
+        <div class="stat-etiqueta">Pedidos pendientes</div>
+    </a>
+    <a href="{% url 'pedidos_panel:pedido_list' %}?estado_pedido=en_preparacion" class="stat-tile acento-ambar">
+        <div class="stat-valor">{{ metricas.en_preparacion }}</div>
+        <div class="stat-etiqueta">En preparación</div>
+    </a>
+    <a href="{% url 'pedidos_panel:pedido_list' %}?estado_pedido=listo" class="stat-tile acento-verde">
+        <div class="stat-valor">{{ metricas.listos }}</div>
+        <div class="stat-etiqueta">Listos</div>
+    </a>
+    <a href="{% url 'pedidos_panel:pedido_list' %}?estado_pago=por_verificar" class="stat-tile acento-ambar">
+        <div class="stat-valor">{{ metricas.pagos_por_verificar }}</div>
+        <div class="stat-etiqueta">Pagos por verificar</div>
+    </a>
+    <div class="stat-tile acento-azul">
+        <div class="stat-valor">{{ metricas.pedidos_hoy }}</div>
+        <div class="stat-etiqueta">Pedidos del día</div>
+    </div>
+    <div class="stat-tile acento-azul">
+        <div class="stat-valor">${{ metricas.ventas_hoy|floatformat:0 }}</div>
+        <div class="stat-etiqueta">Ventas del día</div>
+    </div>
+    <a href="{% url 'menu_panel:producto_list' %}" class="stat-tile">
+        <div class="stat-valor">{{ metricas.productos_activos }}</div>
+        <div class="stat-etiqueta">Productos activos</div>
+    </a>
+    <div class="stat-tile acento-ambar">
+        <div class="stat-valor">{{ metricas.productos_agotados }}</div>
+        <div class="stat-etiqueta">Productos agotados</div>
+    </div>
+</div>
+
+<div class="panel-seccion-titulo">Accesos rápidos</div>
+<div class="dashboard-grid">
+    <a href="{% url 'menu_panel:categoria_list' %}" class="dashboard-tile">
+        <i class="bi bi-tags"></i>
+        <strong>Categorías</strong>
+        <div class="text-secondary small">Organiza el menú por secciones</div>
+    </a>
+    <a href="{% url 'menu_panel:producto_list' %}" class="dashboard-tile">
+        <i class="bi bi-egg-fried"></i>
+        <strong>Productos</strong>
+        <div class="text-secondary small">Platos, precios e imágenes</div>
+    </a>
+    <a href="{% url 'menu_panel:combo_list' %}" class="dashboard-tile">
+        <i class="bi bi-box-seam"></i>
+        <strong>Combos</strong>
+        <div class="text-secondary small">Promociones vigentes</div>
+    </a>
+    <a href="{% url 'pedidos_panel:punto_list' %}" class="dashboard-tile">
+        <i class="bi bi-geo-alt"></i>
+        <strong>Puntos de recogida</strong>
+        <div class="text-secondary small">Sedes disponibles para recoger</div>
+    </a>
+    <a href="{% url 'pedidos_panel:pedido_list' %}" class="dashboard-tile">
+        <i class="bi bi-receipt"></i>
+        <strong>Pedidos</strong>
+        <div class="text-secondary small">Consulta y verifica pagos</div>
+    </a>
+    <a href="{% url 'cuentas_panel:usuario_list' %}" class="dashboard-tile">
+        <i class="bi bi-people"></i>
+        <strong>Usuarios</strong>
+        <div class="text-secondary small">Cuentas y roles del equipo</div>
+    </a>
+</div>
+{% endblock %}

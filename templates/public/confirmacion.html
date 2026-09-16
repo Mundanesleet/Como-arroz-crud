@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% if pedido.estado_pedido != "entregado" and pedido.estado_pedido != "cancelado" %}
+<meta http-equiv="refresh" content="20">
+{% endif %}
+<title>Pedido #{{ pedido.id }} | Como Arroz</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍚</text></svg>">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px 0; }
+    .confirmacion-card {
+        max-width: 560px; width: 100%;
+        background-color: var(--negro-suave); border: 1px solid var(--borde);
+        border-radius: var(--radio); padding: 36px;
+    }
+    .confirmacion-numero { font-size: 2rem; font-weight: 700; color: var(--rojo); }
+    .confirmacion-estado {
+        display: inline-block; padding: 4px 14px; border-radius: 999px;
+        background-color: var(--gris-oscuro); font-size: 0.85rem; margin-bottom: 20px;
+    }
+    .confirmacion-lineas { margin: 20px 0; }
+    .confirmacion-linea { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--borde); }
+    .confirmacion-linea small { color: var(--gris); display: block; }
+
+    /* ---- seguimiento animado ---- */
+    .seguimiento-pasos { display: flex; align-items: flex-start; margin: 28px 0 24px; }
+    .seguimiento-paso { flex: 1; text-align: center; position: relative; }
+    .seguimiento-circulo {
+        width: 38px; height: 38px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 8px; border: 2px solid var(--borde);
+        background-color: var(--negro); position: relative; z-index: 2;
+        font-size: 1rem; color: var(--gris); transition: 0.3s ease;
+    }
+    .seguimiento-paso:not(:last-child)::after {
+        content: ""; position: absolute; top: 18px; left: 50%; width: 100%;
+        height: 3px; background-color: var(--borde); z-index: 1;
+    }
+    .seguimiento-paso.completado .seguimiento-circulo,
+    .seguimiento-paso.activo .seguimiento-circulo {
+        border-color: var(--rojo); background-color: var(--rojo); color: var(--blanco);
+    }
+    .seguimiento-paso.completado:not(:last-child)::after { background-color: var(--rojo); }
+    .seguimiento-etiqueta { font-size: 0.72rem; color: var(--gris); line-height: 1.2; }
+    .seguimiento-paso.activo .seguimiento-etiqueta,
+    .seguimiento-paso.completado .seguimiento-etiqueta { color: var(--blanco); }
+
+    @keyframes pulso-seguimiento {
+        0% { box-shadow: 0 0 0 0 rgba(239, 32, 41, 0.55); }
+        70% { box-shadow: 0 0 0 9px rgba(239, 32, 41, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 32, 41, 0); }
+    }
+    .seguimiento-paso.activo .seguimiento-circulo { animation: pulso-seguimiento 1.8s infinite; }
+
+    .aviso-cancelado {
+        background-color: rgba(200, 16, 24, 0.15); border: 1px solid var(--rojo-oscuro);
+        border-radius: var(--radio); padding: 14px; text-align: center; margin: 20px 0;
+    }
+
+    .btn-whatsapp-pago {
+        display: block; width: 100%; text-align: center; padding: 12px;
+        border-radius: 999px; background-color: #25D366; color: #05310f;
+        font-weight: 700; margin: 16px 0; text-decoration: none;
+    }
+    .btn-whatsapp-pago:hover { background-color: #1ebc59; color: #05310f; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="confirmacion-card mx-auto">
+    <div class="text-center mb-3">
+        <i class="bi bi-check-circle-fill" style="font-size:2.5rem; color:#1c7a3f;"></i>
+    </div>
+    <div class="text-center">
+        <span class="carrito-etiqueta">PEDIDO RECIBIDO</span>
+        <div class="confirmacion-numero">#{{ pedido.id }}</div>
+        <div class="confirmacion-estado">{{ pedido.get_estado_pedido_display }}</div>
+    </div>
+
+    <p class="text-center text-secondary">
+        Gracias, {{ pedido.cliente_nombre }}. Guarda el número de tu pedido para consultarlo más adelante.
+    </p>
+
+    {% if pedido.estado_pedido == "cancelado" %}
+    <div class="aviso-cancelado">
+        <i class="bi bi-x-circle me-1"></i> Este pedido fue cancelado.
+    </div>
+    {% else %}
+    <div class="seguimiento-pasos">
+        {% for paso in pasos %}
+        <div class="seguimiento-paso {{ paso.estado }}">
+            <div class="seguimiento-circulo">
+                {% if paso.estado == "completado" %}
+                    <i class="bi bi-check-lg"></i>
+                {% else %}
+                    <i class="bi {{ paso.icono }}"></i>
+                {% endif %}
+            </div>
+            <div class="seguimiento-etiqueta">{{ paso.etiqueta }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if whatsapp_pago_url %}
+    <a href="{{ whatsapp_pago_url }}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-pago">
+        <i class="bi bi-whatsapp me-2"></i>Enviar comprobante por WhatsApp
+    </a>
+    {% endif %}
+
+    <div class="confirmacion-lineas">
+        {% for linea in pedido.lineas.all %}
+        <div class="confirmacion-linea">
+            <span>
+                {{ linea.cantidad }} × {{ linea.nombre_producto }}
+                {% if linea.nombre_variante %}<small>{{ linea.nombre_variante }}</small>{% endif %}
+            </span>
+            <span>${{ linea.subtotal|floatformat:0 }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="resumen-linea">
+        <span>Subtotal</span>
+        <strong>${{ pedido.subtotal|floatformat:0 }}</strong>
+    </div>
+    {% if pedido.costo_domicilio %}
+    <div class="resumen-linea">
+        <span>Domicilio</span>
+        <strong>${{ pedido.costo_domicilio|floatformat:0 }}</strong>
+    </div>
+    {% endif %}
+    <div class="resumen-total">
+        <span>Total</span>
+        <strong>${{ pedido.total|floatformat:0 }}</strong>
+    </div>
+
+    <hr style="border-color: var(--borde); margin: 24px 0;">
+
+    <p class="mb-1"><i class="bi bi-{% if pedido.tipo_pedido == 'domicilio' %}scooter{% else %}shop{% endif %} me-2"></i>{{ pedido.get_tipo_pedido_display }}
+        {% if pedido.punto_recogida %} — {{ pedido.punto_recogida.nombre }}{% endif %}
+    </p>
+    <p class="mb-1"><i class="bi bi-credit-card me-2"></i>{{ pedido.get_metodo_pago_display }} — {{ pedido.get_estado_pago_display }}</p>
+    {% if pedido.metodo_pago == 'transferencia' and pedido.estado_pago == 'por_verificar' %}
+    <p class="text-secondary small">Tu pago está pendiente de confirmación. En cuanto lo verifiquemos, tu pedido pasa a cocina.</p>
+    {% endif %}
+
+    <a href="{% url 'home' %}" class="btn btn-principal w-100 mt-3">Volver al menú</a>
+</div>
+</div>
+</body>
+</html>

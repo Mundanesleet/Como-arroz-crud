@@ -1,0 +1,85 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Pedido #{{ pedido.id }}{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Pedido #{{ pedido.id }}</h1>
+    <a href="{% url 'pedidos_panel:pedido_list' %}" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="panel-card mb-3">
+            <h5 class="mb-3">Cliente</h5>
+            <p class="mb-1"><strong>{{ pedido.cliente_nombre }}</strong> — {{ pedido.cliente_telefono }}</p>
+            <p class="mb-1">{{ pedido.get_tipo_pedido_display }}
+                {% if pedido.tipo_pedido == "domicilio" %}
+                    — {{ pedido.direccion }}, {{ pedido.barrio }}
+                    {% if pedido.referencia %}({{ pedido.referencia }}){% endif %}
+                {% elif pedido.punto_recogida %}
+                    — {{ pedido.punto_recogida.nombre }}
+                {% endif %}
+            </p>
+            {% if pedido.observaciones %}<p class="text-secondary">"{{ pedido.observaciones }}"</p>{% endif %}
+        </div>
+
+        <div class="panel-card">
+            <h5 class="mb-3">Líneas del pedido</h5>
+            <table class="table table-panel mb-0">
+                <thead><tr><th>Cant.</th><th>Producto</th><th>Precio</th><th>Subtotal</th></tr></thead>
+                <tbody>
+                    {% for linea in pedido.lineas.all %}
+                    <tr>
+                        <td>{{ linea.cantidad }}</td>
+                        <td>{{ linea.nombre_producto }}{% if linea.nombre_variante %} <span class="text-secondary">({{ linea.nombre_variante }})</span>{% endif %}</td>
+                        <td>${{ linea.precio_unitario|floatformat:0 }}</td>
+                        <td>${{ linea.subtotal|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <hr style="border-color: var(--borde);">
+            <div class="d-flex justify-content-between"><span>Subtotal</span><strong>${{ pedido.subtotal|floatformat:0 }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Domicilio</span><strong>${{ pedido.costo_domicilio|floatformat:0 }}</strong></div>
+            <div class="d-flex justify-content-between fs-5"><span>Total</span><strong>${{ pedido.total|floatformat:0 }}</strong></div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="panel-card mb-3">
+            <h5 class="mb-3">Pago</h5>
+            <p class="mb-1">Método: <strong>{{ pedido.get_metodo_pago_display }}</strong></p>
+            <p class="mb-3">Estado: <strong>{{ pedido.get_estado_pago_display }}</strong></p>
+
+            {% if pedido.comprobante_pago %}
+                <a href="{{ pedido.comprobante_pago.url }}" target="_blank" class="btn btn-outline-light w-100 mb-3">
+                    <i class="bi bi-image me-1"></i> Ver comprobante
+                </a>
+            {% endif %}
+
+            <form method="post" class="d-flex flex-column gap-2">
+                {% csrf_token %}
+                {% if pedido.metodo_pago == "transferencia" and pedido.estado_pago == "por_verificar" %}
+                    <button type="submit" name="accion" value="confirmar_pago" class="btn btn-rojo">Confirmar pago</button>
+                    <button type="submit" name="accion" value="rechazar_pago" class="btn btn-outline-danger">Rechazar pago</button>
+                {% elif pedido.estado_pago != "pagado" and pedido.estado_pago != "confirmado" %}
+                    <button type="submit" name="accion" value="marcar_pagado" class="btn btn-rojo">Marcar como pagado</button>
+                {% else %}
+                    <p class="text-secondary mb-0">Este pago ya quedó resuelto.</p>
+                {% endif %}
+            </form>
+
+            {% if pedido.verificado_por %}
+            <p class="text-secondary small mt-3 mb-0">
+                Verificado por {{ pedido.verificado_por }} el {{ pedido.verificado_en|date:"d/m/Y H:i" }}
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="panel-card">
+            <h5 class="mb-3">Estado del pedido</h5>
+            <p class="mb-0"><strong>{{ pedido.get_estado_pedido_display }}</strong></p>
+            <p class="text-secondary small mt-2 mb-0">La cocina gestiona este estado desde su propio portal.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

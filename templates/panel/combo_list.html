@@ -1,0 +1,43 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Combos{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Combos</h1>
+    <a href="{% url 'menu_panel:combo_create' %}" class="btn btn-rojo"><i class="bi bi-plus-lg me-1"></i>Nuevo combo</a>
+</div>
+
+<div class="panel-card">
+    <div class="lista-con-borde">
+        {% for combo in combos %}
+        <div class="item-con-borde">
+            {% if combo.imagen %}
+                <img src="{{ combo.imagen.url }}" alt="" class="item-con-borde-foto">
+            {% else %}
+                <div class="item-con-borde-foto-vacia"><i class="bi bi-image"></i></div>
+            {% endif %}
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    {{ combo.nombre }}
+                    {% if combo.etiqueta %}<span class="badge bg-secondary ms-1">{{ combo.etiqueta }}</span>{% endif %}
+                    {% if combo.activo %}
+                        <span class="badge badge-activo ms-1">Activo</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">Inactivo</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="item-con-borde-precio">${{ combo.precio|floatformat:0 }}</div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'menu_panel:combo_update' combo.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-pencil me-1"></i>Editar</a>
+                <a href="{% url 'menu_panel:combo_delete' combo.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Eliminar</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay combos todavía.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

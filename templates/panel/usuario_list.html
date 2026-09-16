@@ -1,0 +1,50 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Usuarios{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Usuarios</h1>
+    <a href="{% url 'cuentas_panel:usuario_create' %}" class="btn btn-rojo"><i class="bi bi-plus-lg me-1"></i>Nuevo usuario</a>
+</div>
+
+<div class="panel-card">
+    <div class="lista-con-borde">
+        {% for fila in filas %}
+        <div class="item-con-borde">
+            <div class="item-con-borde-foto-vacia"><i class="bi bi-person"></i></div>
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    {{ fila.usuario.username }}
+                    {% if fila.usuario.get_full_name %}<span class="text-secondary">— {{ fila.usuario.get_full_name }}</span>{% endif %}
+                    <span class="badge bg-secondary ms-1">{{ fila.rol }}</span>
+                    {% if fila.usuario.is_active %}
+                        <span class="badge badge-activo ms-1">Activo</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">Inactivo</span>
+                    {% endif %}
+                    {% if fila.usuario.pk == request.user.pk %}<span class="badge bg-dark ms-1">Tú</span>{% endif %}
+                </div>
+                <div class="item-con-borde-meta">{{ fila.usuario.email|default:"Sin correo registrado" }}</div>
+            </div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'cuentas_panel:usuario_update' fila.usuario.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-pencil me-1"></i>Editar</a>
+                <a href="{% url 'cuentas_panel:usuario_password' fila.usuario.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-key me-1"></i>Contraseña</a>
+                {% if fila.usuario.pk != request.user.pk %}
+                <form method="post" action="{% url 'cuentas_panel:usuario_toggle' fila.usuario.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    {% if fila.usuario.is_active %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Desactivar</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-sm btn-outline-success">Activar</button>
+                    {% endif %}
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay usuarios todavía.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

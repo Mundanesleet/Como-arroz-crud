@@ -1,0 +1,70 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Productos{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Productos</h1>
+    <a href="{% url 'menu_panel:producto_create' %}" class="btn btn-rojo"><i class="bi bi-plus-lg me-1"></i>Nuevo producto</a>
+</div>
+
+<div class="panel-card">
+    <form method="get" class="mb-3 d-flex gap-2">
+        <select name="categoria" class="form-select" style="max-width: 260px;" onchange="this.form.submit()">
+            <option value="">Todas las categorías</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.pk }}" {% if categoria_seleccionada|stringformat:"s" == categoria.pk|stringformat:"s" %}selected{% endif %}>{{ categoria.nombre }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="lista-con-borde">
+        {% for producto in productos %}
+        <div class="item-con-borde">
+            {% if producto.imagen %}
+                <img src="{{ producto.imagen.url }}" alt="" class="item-con-borde-foto">
+            {% else %}
+                <div class="item-con-borde-foto-vacia"><i class="bi bi-image"></i></div>
+            {% endif %}
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    {{ producto.nombre }}
+                    {% if producto.etiqueta %}<span class="badge bg-secondary ms-1">{{ producto.etiqueta }}</span>{% endif %}
+                    {% if producto.activo %}
+                        <span class="badge badge-activo ms-1">Activo</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">Inactivo</span>
+                    {% endif %}
+                    {% if producto.agotado %}<span class="badge bg-warning text-dark ms-1">Agotado hoy</span>{% endif %}
+                </div>
+                <div class="item-con-borde-meta">{{ producto.categoria.nombre }}</div>
+            </div>
+
+            <div class="item-con-borde-precio">
+                {% if producto.precio_desde %}${{ producto.precio_desde|floatformat:0 }}{% else %}—{% endif %}
+            </div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'menu_panel:producto_update' producto.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-pencil me-1"></i>Editar</a>
+                <a href="{% url 'menu_panel:producto_delete' producto.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Eliminar</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay productos todavía.</p>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-3">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">Anterior</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if categoria_seleccionada %}&categoria={{ categoria_seleccionada }}{% endif %}">Siguiente</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

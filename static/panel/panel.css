@@ -1,0 +1,287 @@
+/* =========================================================
+   PANEL ADMINISTRATIVO — COMO ARROZ
+   Reutiliza la paleta de marca del sitio público
+   (negro / gris oscuro / blanco / rojo).
+   ========================================================= */
+
+:root {
+    --rojo: #ef2029;
+    --rojo-oscuro: #c81018;
+    --negro: #151515;
+    --negro-suave: #1c1c1c;
+    --gris-oscuro: #242424;
+    --gris: #777777;
+    --blanco: #ffffff;
+    --blanco-suave: #eeeeee;
+    --borde: rgba(255, 255, 255, 0.1);
+    --radio: 14px;
+}
+
+body.panel-body {
+    background-color: var(--negro);
+    color: var(--blanco);
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
+}
+
+.panel-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.panel-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background-color: var(--negro-suave);
+    border-right: 1px solid var(--borde);
+    padding: 24px 0;
+}
+
+.panel-marca {
+    padding: 0 20px 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--borde);
+    margin-bottom: 12px;
+}
+
+.panel-marca .brand-como { color: var(--blanco); }
+.panel-marca .brand-arroz { color: var(--rojo); }
+.panel-marca small { display: block; color: var(--gris); font-weight: 400; letter-spacing: normal; }
+
+.panel-nav a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--blanco-suave);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: 0.2s ease;
+}
+
+.panel-nav a:hover { background-color: var(--gris-oscuro); color: var(--blanco); }
+
+.panel-nav a.activo {
+    background-color: var(--gris-oscuro);
+    border-left-color: var(--rojo);
+    color: var(--blanco);
+    font-weight: 600;
+}
+
+.panel-nav a.salir { color: var(--rojo-oscuro); margin-top: 16px; }
+
+.panel-main { flex: 1; padding: 28px 32px; }
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.panel-header h1 { font-size: 1.6rem; margin: 0; }
+
+.panel-card {
+    background-color: var(--negro-suave);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 20px;
+}
+
+.btn-rojo {
+    background-color: var(--rojo);
+    border-color: var(--rojo);
+    color: var(--blanco);
+}
+.btn-rojo:hover { background-color: var(--rojo-oscuro); border-color: var(--rojo-oscuro); color: var(--blanco); }
+
+.table-panel { color: var(--blanco-suave); }
+.table-panel th { color: var(--gris); border-color: var(--borde); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+.table-panel td { border-color: var(--borde); vertical-align: middle; }
+.table-panel tbody tr:hover { background-color: var(--gris-oscuro); }
+
+/* Botón de acción (Editar, Ver): antes casi invisible con btn-outline-light
+   sobre fondo oscuro. Ahora tiene relleno tenue + borde blanco visible. */
+.btn-accion {
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: var(--blanco);
+}
+.btn-accion:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+    border-color: var(--blanco);
+    color: var(--blanco);
+}
+
+/* Lista de productos: cada fila es su propia "tarjeta" con borde leve,
+   en vez de filas de tabla sin separación visual. */
+.lista-con-borde {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-con-borde {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    background-color: var(--negro);
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.item-con-borde:hover {
+    border-color: rgba(239, 32, 41, 0.45);
+    background-color: var(--gris-oscuro);
+}
+
+.item-con-borde-foto {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.item-con-borde-foto-vacia {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--gris-oscuro);
+    color: var(--gris);
+}
+
+.item-con-borde-info { flex: 1; min-width: 0; }
+.item-con-borde-nombre { font-weight: 600; }
+.item-con-borde-meta { color: var(--gris); font-size: 0.85rem; }
+.item-con-borde-precio { font-weight: 600; white-space: nowrap; }
+.item-con-borde-acciones { display: flex; gap: 8px; flex-shrink: 0; }
+.item-con-borde-acciones form { display: flex; flex: 1; }
+.item-con-borde-acciones form .btn { flex: 1; }
+
+.badge-activo { background-color: #1c7a3f; }
+.badge-inactivo { background-color: var(--gris); }
+
+.panel-login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--negro);
+}
+
+.panel-login-card {
+    width: 100%;
+    max-width: 380px;
+    background-color: var(--negro-suave);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 32px;
+}
+
+.form-control, .form-select {
+    background-color: var(--negro);
+    border-color: var(--borde);
+    color: var(--blanco);
+}
+.form-control:focus, .form-select:focus {
+    background-color: var(--negro);
+    border-color: var(--rojo);
+    color: var(--blanco);
+    box-shadow: 0 0 0 0.2rem rgba(239, 32, 41, 0.25);
+}
+.form-control::placeholder { color: var(--gris); }
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.dashboard-tile {
+    background-color: var(--negro-suave);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 24px;
+    color: var(--blanco);
+    text-decoration: none;
+    display: block;
+    transition: 0.2s ease;
+}
+.dashboard-tile:hover { border-color: var(--rojo); transform: translateY(-2px); }
+.dashboard-tile i { font-size: 1.8rem; color: var(--rojo); margin-bottom: 10px; display: block; }
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.stat-tile {
+    background-color: var(--negro-suave);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--gris);
+    border-radius: var(--radio);
+    padding: 18px 20px;
+    text-decoration: none;
+    color: var(--blanco);
+    display: block;
+    transition: 0.15s ease;
+}
+.stat-tile:hover { background-color: var(--gris-oscuro); }
+.stat-tile .stat-valor { font-size: 1.9rem; font-weight: 700; line-height: 1; }
+.stat-tile .stat-etiqueta { color: var(--gris); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
+
+.stat-tile.acento-rojo { border-left-color: var(--rojo); }
+.stat-tile.acento-ambar { border-left-color: #d9a441; }
+.stat-tile.acento-verde { border-left-color: #1c7a3f; }
+.stat-tile.acento-azul { border-left-color: #2f7ac8; }
+
+.panel-seccion-titulo {
+    color: var(--gris);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 991.98px) {
+    .panel-layout { flex-direction: column; }
+    .panel-sidebar { width: 100%; padding: 12px 0; }
+    .panel-marca { padding: 0 16px 12px; margin-bottom: 8px; border-bottom: none; }
+    .panel-nav { border-top: 1px solid var(--borde); padding-top: 8px; }
+    .panel-main { padding: 20px 16px; }
+}
+
+@media (max-width: 576px) {
+    /* Las filas de "lista con borde" (categorías, productos, combos, etc.)
+       no caben en una sola línea en un celular: se acomodan en 2 líneas. */
+    .item-con-borde {
+        flex-wrap: wrap;
+        row-gap: 10px;
+    }
+    .item-con-borde-info {
+        order: 1;
+        flex-basis: calc(100% - 68px);
+    }
+    .item-con-borde-precio {
+        order: 2;
+        flex-basis: 100%;
+    }
+    .item-con-borde-acciones {
+        order: 3;
+        flex-basis: 100%;
+    }
+    .item-con-borde-acciones .btn { flex: 1; }
+
+    .panel-header { flex-direction: column; align-items: stretch; }
+    .panel-header .btn { width: 100%; }
+
+    .stat-grid, .dashboard-grid { grid-template-columns: 1fr 1fr; }
+}

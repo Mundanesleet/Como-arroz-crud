@@ -1,0 +1,2206 @@
+/* =========================================================
+   COMO ARROZ - ESTILOS PRINCIPALES
+   ========================================================= */
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+:root {
+    --rojo: #ef2029;
+    --rojo-oscuro: #c81018;
+    --rojo-claro: #ff3942;
+
+    --negro: #151515;
+    --negro-suave: #1c1c1c;
+    --gris-oscuro: #242424;
+    --gris: #777777;
+
+    --blanco: #ffffff;
+    --blanco-suave: #eeeeee;
+
+    --borde: rgba(255, 255, 255, 0.1);
+
+    --radio: 18px;
+    --transicion: 0.3s ease;
+}
+
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--negro);
+    color: var(--blanco);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+    background-color: var(--rojo);
+    color: var(--blanco);
+}
+
+/*
+   Accesibilidad: outline visible al navegar con teclado (Tab),
+   sin mostrarlo en clics de mouse (:focus-visible se encarga
+   de eso automáticamente).
+*/
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--rojo);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   BARRA DE NAVEGACIÓN
+   ========================================================= */
+
+#navbar {
+    background: rgba(21, 21, 21, 0.94);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid var(--borde);
+
+    padding: 15px 0;
+
+    transition: var(--transicion);
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.brand-como {
+    color: var(--blanco);
+}
+
+.brand-arroz {
+    color: var(--rojo);
+}
+
+.navbar-nav {
+    gap: 8px;
+}
+
+.nav-link {
+    color: #cccccc !important;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    padding: 8px 12px !important;
+
+    transition: var(--transicion);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--rojo) !important;
+}
+
+
+/* =========================================================
+   BOTÓN DEL CARRITO
+   ========================================================= */
+
+.btn-carrito {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background-color: var(--rojo);
+    color: var(--blanco);
+
+    border: none;
+    border-radius: 50px;
+
+    padding: 9px 15px;
+
+    font-size: 0.85rem;
+    font-weight: 700;
+
+    transition: var(--transicion);
+}
+
+.btn-carrito:hover {
+    background-color: var(--rojo-claro);
+    color: var(--blanco);
+
+    transform: translateY(-2px);
+}
+
+.btn-carrito i {
+    font-size: 1rem;
+}
+
+.carrito-contador {
+    background-color: var(--blanco);
+    color: var(--rojo);
+
+    min-width: 22px;
+    height: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 0.75rem;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero {
+    position: relative;
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+
+    background:
+        radial-gradient(circle at 85% 50%,
+            rgba(239, 32, 41, 0.16),
+            transparent 35%),
+        var(--negro);
+
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    border: 1px solid rgba(239, 32, 41, 0.12);
+    border-radius: 50%;
+
+    right: -200px;
+    top: 15%;
+}
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    border: 1px solid rgba(239, 32, 41, 0.08);
+    border-radius: 50%;
+
+    right: -120px;
+    top: 23%;
+}
+
+.hero-contenido {
+    position: relative;
+    z-index: 2;
+
+    padding-top: 80px;
+}
+
+.hero-etiqueta,
+.seccion-etiqueta,
+.combo-etiqueta,
+.carrito-etiqueta {
+    display: inline-block;
+
+    color: var(--rojo);
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+.hero h1 {
+    max-width: 650px;
+
+    margin-top: 15px;
+    margin-bottom: 20px;
+
+    font-size: clamp(3.2rem, 7vw, 6.5rem);
+
+    line-height: 0.95;
+    font-weight: 900;
+    letter-spacing: -4px;
+}
+
+.hero h1 span {
+    color: var(--rojo);
+}
+
+.hero-descripcion {
+    max-width: 520px;
+
+    color: #bbbbbb;
+
+    font-size: 1.15rem;
+    line-height: 1.7;
+
+    margin-bottom: 35px;
+}
+
+.hero-botones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+/* =========================================================
+   BOTONES GENERALES
+   ========================================================= */
+
+.btn-principal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background-color: var(--rojo);
+    color: var(--blanco);
+
+    border: 2px solid var(--rojo);
+    border-radius: 50px;
+
+    padding: 13px 24px;
+
+    font-weight: 800;
+    font-size: 0.9rem;
+
+    transition: var(--transicion);
+}
+
+.btn-principal:hover {
+    background-color: transparent;
+    color: var(--rojo);
+
+    transform: translateY(-3px);
+}
+
+.btn-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: transparent;
+    color: var(--blanco);
+
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50px;
+
+    padding: 13px 24px;
+
+    font-weight: 700;
+    font-size: 0.9rem;
+
+    transition: var(--transicion);
+}
+
+.btn-secundario:hover {
+    border-color: var(--rojo);
+    color: var(--rojo);
+
+    transform: translateY(-3px);
+}
+
+
+/* =========================================================
+   IMAGEN HERO
+   ========================================================= */
+
+.hero-imagen {
+    position: relative;
+
+    min-height: 550px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 2;
+
+    overflow: hidden;
+}
+
+.hero-imagen-contenedor {
+    position: relative;
+
+    width: min(500px, 90vw);
+    height: 500px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-circulo {
+    position: absolute;
+
+    width: 430px;
+    height: 430px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle,
+            rgba(239, 32, 41, 0.3),
+            rgba(239, 32, 41, 0.03) 65%,
+            transparent 70%);
+
+    border: 1px solid rgba(239, 32, 41, 0.25);
+}
+
+.hero-plato {
+    position: relative;
+
+    width: 360px;
+    height: 360px;
+
+    border-radius: 50%;
+
+    background-color: var(--gris-oscuro);
+
+    border: 8px solid #333333;
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 50px rgba(239, 32, 41, 0.12);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: rotate(-5deg);
+
+    transition: transform 0.5s ease;
+
+    overflow: hidden;
+}
+
+.hero-plato:hover {
+    transform: rotate(0deg) scale(1.03);
+}
+
+.hero-foto {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+.plato-placeholder {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    color: #777777;
+
+    background:
+        radial-gradient(circle at center,
+            #303030,
+            #1e1e1e);
+}
+
+.plato-placeholder i {
+    color: var(--rojo);
+
+    font-size: 5rem;
+
+    margin-bottom: 10px;
+}
+
+.plato-placeholder span {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   CATEGORÍAS
+   ========================================================= */
+
+.categorias {
+    position: relative;
+
+    padding: 80px 0 35px;
+
+    background-color: var(--negro-suave);
+}
+
+.categorias h2,
+.productos h2,
+.ubicaciones h2,
+.cta h2 {
+    margin-top: 8px;
+
+    font-size: clamp(2rem, 4vw, 3.2rem);
+
+    font-weight: 900;
+    letter-spacing: -1.5px;
+}
+
+.categorias p {
+    color: #999999;
+
+    margin-top: 10px;
+}
+
+.categorias-scroll {
+    display: flex;
+    gap: 10px;
+
+    overflow-x: auto;
+
+    padding: 10px 5px 16px;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--rojo) transparent;
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    height: 5px;
+}
+
+.categorias-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.categorias-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--rojo);
+    border-radius: 10px;
+}
+
+.categoria-btn {
+    flex: 0 0 auto;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background-color: transparent;
+    color: #aaaaaa;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 50px;
+
+    padding: 10px 16px;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.categoria-btn i {
+    color: var(--rojo);
+
+    font-size: 0.95rem;
+}
+
+.categoria-btn:hover {
+    color: var(--blanco);
+
+    border-color: var(--rojo);
+
+    transform: translateY(-2px);
+}
+
+.categoria-btn.activo {
+    background-color: var(--rojo);
+    color: var(--blanco);
+
+    border-color: var(--rojo);
+}
+
+.categoria-btn.activo i {
+    color: var(--blanco);
+}
+
+
+/* =========================================================
+   PRODUCTOS
+   ========================================================= */
+
+.productos {
+    padding: 50px 0 90px;
+
+    background-color: var(--negro-suave);
+}
+
+.productos-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+.productos-contador {
+    color: #777777;
+
+    font-size: 0.85rem;
+}
+
+.productos-contador span {
+    color: var(--rojo);
+
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   TARJETAS DE PRODUCTOS
+   ========================================================= */
+
+.producto-card {
+    height: 100%;
+
+    background-color: #202020;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+
+    border-color: rgba(239, 32, 41, 0.45);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+.producto-imagen {
+    position: relative;
+
+    height: 190px;
+
+    background:
+        linear-gradient(135deg,
+            #303030,
+            #1c1c1c);
+
+    overflow: hidden;
+}
+
+/*
+   Cuando haya una imagen real:
+   hace que la fotografía ocupe correctamente
+   todo el espacio sin deformarse.
+*/
+
+.producto-imagen img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.5s ease;
+}
+
+.producto-card:hover .producto-imagen img {
+    transform: scale(1.04);
+}
+
+.producto-imagen-placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    color: #666666;
+}
+
+.producto-imagen-placeholder i {
+    color: #444444;
+
+    font-size: 3.5rem;
+
+    margin-bottom: 8px;
+}
+
+.producto-imagen-placeholder span {
+    font-size: 0.7rem;
+
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.producto-etiqueta {
+    position: absolute;
+
+    top: 10px;
+    left: 10px;
+
+    background-color: var(--rojo);
+    color: var(--blanco);
+
+    border-radius: 50px;
+
+    padding: 5px 9px;
+
+    font-size: 0.62rem;
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+.producto-contenido {
+    display: flex;
+    flex-direction: column;
+
+    padding: 16px;
+
+    min-height: 155px;
+}
+
+.producto-nombre {
+    margin-bottom: 6px;
+
+    color: var(--blanco);
+
+    font-size: 1.05rem;
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+.producto-descripcion {
+    flex-grow: 1;
+
+    color: #929292;
+
+    font-size: 0.76rem;
+    line-height: 1.45;
+
+    margin-bottom: 14px;
+
+    /*
+       Evita que una descripción demasiado larga
+       haga crecer demasiado la tarjeta.
+    */
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.producto-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+}
+
+.producto-precio {
+    color: var(--rojo);
+
+    font-size: 1.12rem;
+    font-weight: 900;
+}
+
+.btn-agregar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    background-color: var(--rojo);
+    color: var(--blanco);
+
+    border: none;
+    border-radius: 50%;
+
+    font-size: 0.95rem;
+
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.btn-agregar:hover {
+    background-color: var(--rojo-claro);
+
+    transform: scale(1.08);
+}
+
+.btn-agregar:active {
+    transform: scale(0.9);
+}
+
+
+/* =========================================================
+   COMBOS
+   ========================================================= */
+
+.combos {
+    padding: 90px 0;
+
+    background-color: var(--negro);
+}
+
+.combo-card {
+    position: relative;
+
+    min-height: 420px;
+
+    display: flex;
+    align-items: center;
+
+    background:
+        linear-gradient(100deg,
+            #272727 0%,
+            #1d1d1d 65%,
+            #171717 100%);
+
+    border: 1px solid rgba(239, 32, 41, 0.25);
+    border-radius: 25px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.35);
+}
+
+.combo-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    background-color: rgba(239, 32, 41, 0.08);
+
+    right: 25%;
+    top: 50%;
+
+    transform: translateY(-50%);
+}
+
+.combo-contenido {
+    position: relative;
+    z-index: 2;
+
+    width: 55%;
+
+    padding: 60px;
+}
+
+.combo-contenido h2 {
+    margin: 12px 0 15px;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+
+    font-weight: 900;
+}
+
+.combo-contenido p {
+    max-width: 550px;
+
+    color: #aaaaaa;
+
+    line-height: 1.7;
+
+    margin-bottom: 20px;
+}
+
+.combo-precio {
+    color: var(--rojo);
+
+    font-size: 2rem;
+    font-weight: 900;
+
+    margin-bottom: 25px;
+}
+
+/*
+   Nota: antes esta regla estaba duplicada más abajo en el archivo
+   (una segunda vez, solo para sumarle z-index). Queda unificada aquí.
+*/
+.combo-imagen {
+    position: absolute;
+
+    width: 45%;
+    height: 100%;
+
+    right: 0;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+}
+
+.combo-placeholder {
+    width: 280px;
+    height: 280px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background-color: #292929;
+
+    border: 8px solid #363636;
+
+    color: #666666;
+
+    transform: rotate(7deg);
+}
+
+.combo-placeholder i {
+    color: var(--rojo);
+
+    font-size: 4rem;
+
+    margin-bottom: 10px;
+}
+
+.combo-placeholder span {
+    font-size: 0.7rem;
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.combo-foto {
+    width: 360px;
+    height: 360px;
+
+    max-width: 80%;
+    max-height: 80%;
+
+    display: block;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 50%;
+
+    transform: rotate(7deg);
+
+    transition: transform 0.5s ease;
+
+    overflow: hidden;
+}
+
+.combo-card:hover .combo-foto {
+    transform: rotate(0deg) scale(1.03);
+}
+
+
+/* =========================================================
+   UBICACIONES
+   ========================================================= */
+
+.ubicaciones {
+    padding: 90px 0;
+
+    background-color: var(--negro-suave);
+}
+
+.ubicaciones p {
+    color: #999999;
+}
+
+.ubicacion-card {
+    height: 100%;
+
+    padding: 30px;
+
+    background-color: #202020;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radio);
+
+    transition: var(--transicion);
+}
+
+.ubicacion-card:hover {
+    border-color: rgba(239, 32, 41, 0.4);
+
+    transform: translateY(-5px);
+}
+
+.ubicacion-icono {
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(239, 32, 41, 0.12);
+    color: var(--rojo);
+
+    border-radius: 14px;
+
+    margin-bottom: 20px;
+
+    font-size: 1.4rem;
+}
+
+.ubicacion-card h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+
+    text-transform: capitalize;
+}
+
+.ubicacion-card p {
+    min-height: 24px;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 20px;
+}
+
+.ubicacion-link {
+    color: var(--rojo);
+
+    font-size: 0.85rem;
+    font-weight: 800;
+
+    transition: var(--transicion);
+}
+
+.ubicacion-link:hover {
+    color: var(--rojo-claro);
+}
+
+.ubicacion-link i {
+    margin-left: 5px;
+}
+
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.cta {
+    position: relative;
+
+    padding: 110px 0;
+
+    background:
+        radial-gradient(circle at center,
+            rgba(239, 32, 41, 0.18),
+            transparent 50%),
+        var(--negro);
+}
+
+.cta-contenido {
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+.cta h2 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+
+    line-height: 1;
+
+    margin: 12px 0 20px;
+}
+
+.cta p {
+    color: #999999;
+
+    margin-bottom: 30px;
+}
+
+.btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background-color: #25d366;
+    color: var(--blanco);
+
+    border: 2px solid #25d366;
+    border-radius: 50px;
+
+    padding: 14px 25px;
+
+    font-weight: 800;
+
+    transition: var(--transicion);
+}
+
+.btn-whatsapp:hover {
+    background-color: transparent;
+    color: #25d366;
+
+    border-color: #25d366;
+
+    transform: translateY(-3px);
+}
+
+.btn-whatsapp i {
+    font-size: 1.1rem;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    padding: 40px 0;
+
+    background-color: #101010;
+
+    border-top: 1px solid var(--borde);
+}
+
+.footer-logo {
+    color: var(--blanco);
+
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.footer-logo span {
+    color: var(--rojo);
+}
+
+footer p {
+    color: #666666;
+
+    font-size: 0.8rem;
+}
+
+/*
+   Antes tenía !important en ambas propiedades. No hacía falta:
+   .footer-demo (una clase) ya gana por especificidad sobre
+   "footer p" (dos elementos), así que se quitó el !important.
+*/
+.footer-demo {
+    color: #444444;
+
+    font-size: 0.7rem;
+}
+
+
+/* =========================================================
+   CARRITO
+   ========================================================= */
+
+.carrito {
+    width: min(450px, 100%);
+
+    background-color: #181818;
+
+    color: var(--blanco);
+
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.carrito .offcanvas-header {
+    padding: 25px;
+
+    border-bottom: 1px solid var(--borde);
+}
+
+.carrito .offcanvas-title {
+    margin-top: 5px;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.carrito .offcanvas-body {
+    padding: 25px;
+}
+
+.carrito-vacio {
+    height: 70%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.carrito-vacio i {
+    color: #444444;
+
+    font-size: 4rem;
+
+    margin-bottom: 20px;
+}
+
+.carrito-vacio h4 {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.carrito-vacio p {
+    color: #777777;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   ITEM DEL CARRITO
+   ========================================================= */
+
+.carrito-item {
+    display: flex;
+    gap: 12px;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid var(--borde);
+}
+
+.carrito-item-info {
+    flex-grow: 1;
+}
+
+.carrito-item-nombre {
+    color: var(--blanco);
+
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    margin-bottom: 5px;
+}
+
+.carrito-item-precio {
+    color: var(--rojo);
+
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.carrito-item-total {
+    color: var(--blanco);
+
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    text-align: right;
+}
+
+.cantidad-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.cantidad-btn {
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #2d2d2d;
+    color: var(--blanco);
+
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.cantidad-btn:hover {
+    background-color: var(--rojo);
+}
+
+.cantidad-numero {
+    min-width: 20px;
+
+    color: var(--blanco);
+
+    text-align: center;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.btn-eliminar {
+    color: #666666;
+
+    background: none;
+    border: none;
+
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.btn-eliminar:hover {
+    color: var(--rojo);
+}
+
+
+/* =========================================================
+   RESUMEN DEL CARRITO
+   ========================================================= */
+
+.carrito-resumen {
+    margin-top: 25px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--borde);
+}
+
+.resumen-linea,
+.resumen-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.resumen-linea {
+    color: #888888;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 12px;
+}
+
+.resumen-total {
+    color: var(--blanco);
+
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.resumen-total strong {
+    color: var(--rojo);
+
+    font-size: 1.5rem;
+}
+
+
+/* =========================================================
+   MODAL DEL PEDIDO
+   ========================================================= */
+
+.pedido-modal {
+    background-color: #1b1b1b;
+
+    color: var(--blanco);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+.pedido-modal .modal-header {
+    padding: 25px;
+
+    border-bottom: 1px solid var(--borde);
+}
+
+.pedido-modal .modal-title {
+    margin-top: 5px;
+
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.pedido-modal .modal-body {
+    padding: 25px;
+}
+
+.form-section {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+
+    color: #cccccc;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   OPCIONES DEL FORMULARIO
+   ========================================================= */
+
+.opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.opcion {
+    position: relative;
+
+    display: block;
+
+    cursor: pointer;
+}
+
+.opcion input {
+    position: absolute;
+
+    opacity: 0;
+}
+
+.opcion-contenido {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    width: 100%;
+
+    padding: 15px;
+
+    background-color: #242424;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+
+    transition: var(--transicion);
+}
+
+.opcion-contenido i {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    background-color: rgba(239, 32, 41, 0.1);
+    color: var(--rojo);
+
+    border-radius: 10px;
+
+    font-size: 1.1rem;
+}
+
+.opcion-contenido span {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+.opcion-contenido strong {
+    color: var(--blanco);
+
+    font-size: 0.85rem;
+}
+
+.opcion-contenido small {
+    color: #777777;
+
+    font-size: 0.7rem;
+}
+
+.opcion:hover .opcion-contenido {
+    border-color: rgba(239, 32, 41, 0.4);
+}
+
+.opcion input:checked+.opcion-contenido {
+    background-color: rgba(239, 32, 41, 0.08);
+
+    border-color: var(--rojo);
+}
+
+.opcion input:checked+.opcion-contenido i {
+    background-color: var(--rojo);
+    color: var(--blanco);
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.form-control,
+.form-select {
+    width: 100%;
+
+    background-color: #242424;
+    color: var(--blanco);
+
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+
+    padding: 12px 14px;
+
+    font-size: 0.85rem;
+
+    margin-bottom: 10px;
+}
+
+.form-control::placeholder {
+    color: #666666;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: #292929;
+    color: var(--blanco);
+
+    border-color: var(--rojo);
+
+    box-shadow: 0 0 0 3px rgba(239, 32, 41, 0.1);
+}
+
+.form-select option {
+    background-color: #242424;
+    color: var(--blanco);
+}
+
+
+/* =========================================================
+   ALERTA DE TARJETA
+   ========================================================= */
+
+.alerta-pago {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    margin-top: 10px;
+    padding: 12px;
+
+    background-color: rgba(239, 32, 41, 0.08);
+
+    border: 1px solid rgba(239, 32, 41, 0.2);
+    border-radius: 10px;
+
+    color: #cccccc;
+
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.alerta-pago i {
+    color: var(--rojo);
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   BOTÓN ENVIAR PEDIDO
+   ========================================================= */
+
+.btn-enviar-pedido {
+    width: 100%;
+
+    padding: 14px 20px;
+}
+
+.texto-confirmacion {
+    color: #666666;
+
+    font-size: 0.7rem;
+    line-height: 1.5;
+
+    text-align: center;
+
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #3a3a3a;
+
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--rojo);
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-contenido {
+    animation: aparecer 0.8s ease forwards;
+}
+
+.hero-imagen {
+    animation: aparecer 0.8s ease 0.15s forwards;
+
+    opacity: 0;
+}
+
+
+/* =========================================================
+   SELECTOR DE VARIANTES
+   ========================================================= */
+
+.variante-opcion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 7px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #222222;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.variante-opcion:hover {
+    border-color: #ef2029;
+    background: #fff5f5;
+}
+
+.variante-opcion input[type="radio"] {
+    margin: 0;
+    width: 17px;
+    height: 17px;
+    accent-color: #ef2029;
+    flex-shrink: 0;
+}
+
+.variante-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+    color: #222222;
+}
+
+.variante-nombre {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #222222;
+}
+
+.variante-precio {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ef2029;
+    white-space: nowrap;
+}
+
+/* Modal de selección de arroz */
+
+#modalVariantes .modal-dialog {
+    max-width: 430px;
+}
+
+#modalVariantes .modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+#modalVariantes .modal-header {
+    padding: 16px 20px;
+}
+
+#modalVariantes .modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+#modalVariantes .modal-body {
+    padding: 18px 20px;
+}
+
+#modalVariantes .modal-footer {
+    padding: 12px 20px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    #navbar {
+        padding: 12px 0;
+    }
+
+    .navbar-collapse {
+        margin-top: 15px;
+
+        padding-top: 15px;
+
+        border-top: 1px solid var(--borde);
+    }
+
+    .navbar-nav {
+        align-items: stretch !important;
+    }
+
+    .btn-carrito {
+        width: 100%;
+
+        justify-content: center;
+
+        margin-top: 10px;
+    }
+
+    .hero {
+        padding-top: 90px;
+    }
+
+    .hero-contenido {
+        text-align: center;
+
+        padding-top: 60px;
+    }
+
+    .hero-descripcion {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-botones {
+        justify-content: center;
+    }
+
+    .hero-imagen {
+        min-height: 450px;
+    }
+
+    .combo-contenido {
+        width: 60%;
+
+        padding: 45px;
+    }
+
+    .combo-imagen {
+        width: 40%;
+    }
+
+    .combo-placeholder {
+        width: 230px;
+        height: 230px;
+    }
+
+    /*
+       En tablet mantenemos 2 o 3 columnas
+       según el Bootstrap que ya tienes.
+    */
+
+    .producto-imagen {
+        height: 180px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MÓVIL
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .hero {
+        min-height: auto;
+
+        padding-bottom: 35px;
+    }
+
+    .hero-contenido {
+        padding-top: 100px;
+    }
+
+    .hero h1 {
+        font-size: clamp(3rem, 15vw, 4.5rem);
+
+        letter-spacing: -3px;
+    }
+
+    .hero-descripcion {
+        font-size: 0.95rem;
+        line-height: 1.6;
+
+        margin-bottom: 25px;
+    }
+
+    .hero-botones {
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .hero-botones .btn {
+        width: 100%;
+    }
+
+    .hero-imagen {
+        min-height: 310px;
+
+        margin-top: 10px;
+    }
+
+    .hero-imagen-contenedor {
+        width: 310px;
+        height: 310px;
+    }
+
+    .hero-circulo {
+        width: 275px;
+        height: 275px;
+    }
+
+    .hero-plato {
+        width: 235px;
+        height: 235px;
+    }
+
+    .plato-placeholder i {
+        font-size: 3rem;
+    }
+
+
+    /* -------------------------
+       CATEGORÍAS
+       ------------------------- */
+
+    .categorias {
+        padding-top: 55px;
+        padding-bottom: 25px;
+    }
+
+    .categorias h2,
+    .productos h2 {
+        font-size: 2rem;
+    }
+
+    .categorias p {
+        font-size: 0.85rem;
+    }
+
+    .categorias-scroll {
+        gap: 8px;
+
+        padding-top: 8px;
+        padding-bottom: 12px;
+
+        /*
+           Ocultamos visualmente la barra en móvil.
+           Se sigue pudiendo deslizar.
+        */
+        scrollbar-width: none;
+    }
+
+    .categorias-scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .categoria-btn {
+        padding: 9px 13px;
+
+        font-size: 0.75rem;
+    }
+
+    .categoria-btn i {
+        font-size: 0.85rem;
+    }
+
+
+    /* -------------------------
+       PRODUCTOS
+       ------------------------- */
+
+    .productos {
+        padding-top: 35px;
+        padding-bottom: 65px;
+    }
+
+    .productos-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 6px;
+
+        margin-bottom: 20px;
+    }
+
+    /*
+       IMPORTANTE:
+       Las tarjetas pasan a verse mucho más compactas.
+    */
+
+    .producto-imagen {
+        height: 145px;
+    }
+
+    .producto-contenido {
+        padding: 12px;
+
+        min-height: 125px;
+    }
+
+    .producto-nombre {
+        font-size: 0.92rem;
+
+        margin-bottom: 5px;
+    }
+
+    .producto-descripcion {
+        font-size: 0.68rem;
+
+        line-height: 1.35;
+
+        margin-bottom: 10px;
+
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .producto-precio {
+        font-size: 0.95rem;
+    }
+
+    .btn-agregar {
+        width: 34px;
+        height: 34px;
+
+        font-size: 0.85rem;
+    }
+
+    .producto-etiqueta {
+        top: 7px;
+        left: 7px;
+
+        padding: 4px 7px;
+
+        font-size: 0.55rem;
+    }
+
+
+    /* -------------------------
+       COMBOS
+       ------------------------- */
+
+    .combo-card {
+        min-height: auto;
+
+        flex-direction: column;
+        align-items: stretch;
+
+        border: none;
+    }
+
+    .combo-contenido {
+        width: 100%;
+
+        padding: 35px 25px 10px;
+    }
+
+    .combo-contenido h2 {
+        font-size: 2.2rem;
+    }
+
+    .combo-contenido p {
+        font-size: 0.85rem;
+    }
+
+    .combo-imagen {
+        position: relative;
+
+        width: 100%;
+        height: 250px;
+
+        right: auto;
+        top: auto;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 10px 20px 25px;
+
+        overflow: hidden;
+    }
+
+    .combo-placeholder {
+        width: 190px;
+        height: 190px;
+    }
+
+    .combo-placeholder i {
+        font-size: 3rem;
+    }
+
+    .combo-foto {
+        width: 240px;
+        height: 240px;
+
+        max-width: 85%;
+        max-height: 85%;
+
+        object-fit: cover;
+        object-position: center;
+
+        border-radius: 50%;
+
+        transform: rotate(7deg);
+
+        transition: transform 0.5s ease;
+    }
+
+    .combo-card:hover .combo-foto {
+        transform: rotate(0deg) scale(1.03);
+    }
+
+
+    /* -------------------------
+       UBICACIONES
+       ------------------------- */
+
+    .ubicaciones,
+    .combos {
+        padding: 65px 0;
+    }
+
+    .ubicacion-card {
+        padding: 22px;
+    }
+
+
+    /* -------------------------
+       CTA
+       ------------------------- */
+
+    .cta {
+        padding: 75px 0;
+    }
+
+    .cta h2 {
+        font-size: 2.6rem;
+    }
+
+
+    /* -------------------------
+       FOOTER
+       ------------------------- */
+
+    footer {
+        text-align: center;
+    }
+
+    footer .text-md-end {
+        margin-top: 25px;
+
+        text-align: center !important;
+    }
+
+
+    /* -------------------------
+       CARRITO
+       ------------------------- */
+
+    .carrito {
+        width: 100%;
+    }
+
+
+    /* -------------------------
+       MODAL
+       ------------------------- */
+
+    .pedido-modal .modal-body,
+    .pedido-modal .modal-header {
+        padding: 20px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MÓVIL PEQUEÑO
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-imagen-contenedor {
+        width: 280px;
+        height: 280px;
+    }
+
+    .hero-circulo {
+        width: 250px;
+        height: 250px;
+    }
+
+    .hero-plato {
+        width: 210px;
+        height: 210px;
+    }
+
+
+    /*
+       En teléfonos pequeños las tarjetas
+       siguen siendo compactas.
+    */
+
+    .producto-imagen {
+        height: 130px;
+    }
+
+    .producto-contenido {
+        padding: 10px;
+
+        min-height: 118px;
+    }
+
+    .producto-nombre {
+        font-size: 0.86rem;
+    }
+
+    .producto-descripcion {
+        font-size: 0.64rem;
+    }
+
+    .producto-precio {
+        font-size: 0.9rem;
+    }
+
+    .btn-agregar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .combo-contenido {
+        padding: 28px 18px;
+    }
+}

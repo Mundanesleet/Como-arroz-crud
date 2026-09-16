@@ -1,0 +1,75 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Pedidos{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Pedidos</h1>
+</div>
+
+<div class="panel-card">
+    <form method="get" class="mb-3 d-flex flex-wrap gap-2">
+        <select name="estado_pago" class="form-select" style="max-width: 220px;" onchange="this.form.submit()">
+            <option value="">Todos los pagos</option>
+            {% for valor, etiqueta in estados_pago %}
+            <option value="{{ valor }}" {% if estado_pago_seleccionado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+        <select name="estado_pedido" class="form-select" style="max-width: 220px;" onchange="this.form.submit()">
+            <option value="">Todos los pedidos</option>
+            {% for valor, etiqueta in estados_pedido %}
+            <option value="{{ valor }}" {% if estado_pedido_seleccionado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="lista-con-borde">
+        {% for pedido in pedidos %}
+        <div class="item-con-borde">
+            <div class="item-con-borde-foto-vacia">
+                <i class="bi {% if pedido.tipo_pedido == 'domicilio' %}bi-scooter{% else %}bi-shop{% endif %}"></i>
+            </div>
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    #{{ pedido.id }} — {{ pedido.cliente_nombre }}
+                    {% if pedido.estado_pago == "por_verificar" %}
+                        <span class="badge bg-warning text-dark ms-1">{{ pedido.get_estado_pago_display }}</span>
+                    {% elif pedido.estado_pago == "confirmado" or pedido.estado_pago == "pagado" %}
+                        <span class="badge badge-activo ms-1">{{ pedido.get_estado_pago_display }}</span>
+                    {% elif pedido.estado_pago == "rechazado" %}
+                        <span class="badge bg-danger ms-1">{{ pedido.get_estado_pago_display }}</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">{{ pedido.get_estado_pago_display }}</span>
+                    {% endif %}
+                    <span class="badge bg-secondary ms-1">{{ pedido.get_estado_pedido_display }}</span>
+                </div>
+                <div class="item-con-borde-meta">
+                    {{ pedido.fecha|date:"d/m/Y H:i" }} · {{ pedido.get_tipo_pedido_display }} · {{ pedido.get_metodo_pago_display }}
+                </div>
+            </div>
+
+            <div class="item-con-borde-precio">${{ pedido.total|floatformat:0 }}</div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'pedidos_panel:pedido_detail' pedido.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-eye me-1"></i>Ver</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay pedidos todavía.</p>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-3">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

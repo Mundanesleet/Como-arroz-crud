@@ -1,0 +1,37 @@
+{% extends "panel/base.html" %}
+{% block titulo %}Puntos de recogida{% endblock %}
+{% block contenido %}
+<div class="panel-header">
+    <h1>Puntos de recogida</h1>
+    <a href="{% url 'pedidos_panel:punto_create' %}" class="btn btn-rojo"><i class="bi bi-plus-lg me-1"></i>Nuevo punto</a>
+</div>
+
+<div class="panel-card">
+    <div class="lista-con-borde">
+        {% for punto in puntos %}
+        <div class="item-con-borde">
+            <div class="item-con-borde-foto-vacia"><i class="bi bi-geo-alt"></i></div>
+
+            <div class="item-con-borde-info">
+                <div class="item-con-borde-nombre">
+                    {{ punto.nombre }}
+                    {% if punto.activo %}
+                        <span class="badge badge-activo ms-1">Activo</span>
+                    {% else %}
+                        <span class="badge badge-inactivo ms-1">Inactivo</span>
+                    {% endif %}
+                </div>
+                <div class="item-con-borde-meta">{{ punto.direccion|default:"Sin dirección registrada" }}</div>
+            </div>
+
+            <div class="item-con-borde-acciones">
+                <a href="{% url 'pedidos_panel:punto_update' punto.pk %}" class="btn btn-sm btn-accion"><i class="bi bi-pencil me-1"></i>Editar</a>
+                <a href="{% url 'pedidos_panel:punto_delete' punto.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i>Eliminar</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-secondary py-4 mb-0">No hay puntos de recogida todavía.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

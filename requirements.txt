@@ -1,3 +1,4 @@
 Django==5.1.2
 Pillow==12.3.0
 gunicorn
+dj-database-url

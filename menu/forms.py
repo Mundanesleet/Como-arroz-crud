@@ -11,7 +11,11 @@ class CategoriaForm(forms.ModelForm):
         fields = ["nombre", "icono", "orden", "activa"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control"}),
-            "icono": forms.TextInput(attrs={"class": "form-control", "placeholder": "bi-egg-fried"}),
+            # El campo sigue siendo un CharField libre a nivel de modelo
+            # (compatibilidad total con cualquier valor ya guardado), pero
+            # en el formulario se llena con clics desde un selector visual
+            # (ver categoria_form.html), nunca escribiendo texto a mano.
+            "icono": forms.HiddenInput(),
             "orden": forms.NumberInput(attrs={"class": "form-control"}),
             "activa": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }

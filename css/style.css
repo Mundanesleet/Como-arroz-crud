@@ -644,8 +644,6 @@ textarea:focus-visible {
             #1c1c1c);
 
     overflow: hidden;
-
-    cursor: pointer;
 }
 
 /*
@@ -1739,31 +1737,6 @@ footer p {
 
 #modalVariantes .modal-footer {
     padding: 12px 20px;
-}
-
-
-/* =========================================================
-   ESTADO VACÍO DE PRODUCTOS
-   (la BD es la única fuente de verdad: si no hay productos,
-   no se inventan datos ni se dejan tarjetas fantasma)
-   ========================================================= */
-
-.productos-vacio {
-    text-align: center;
-    padding: 60px 20px;
-    color: #999999;
-}
-
-.productos-vacio i {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 12px;
-    color: var(--gris);
-}
-
-.productos-vacio p {
-    margin: 0;
-    font-size: 1.05rem;
 }
 
 

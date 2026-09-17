@@ -6,7 +6,7 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 from config.mixins import PanelStaffRequiredMixin
 
 from .forms import CategoriaForm, ComboForm, ProductoForm, VarianteFormSet
-from .models import Categoria, Combo, Producto
+from .models import ICONOS_CATEGORIA, Categoria, Combo, Producto
 
 # ---------------------------------------------------------------------------
 # CATEGORÍAS
@@ -25,6 +25,11 @@ class CategoriaCreateView(PanelStaffRequiredMixin, CreateView):
     template_name = "panel/categoria_form.html"
     success_url = reverse_lazy("menu_panel:categoria_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["iconos_disponibles"] = ICONOS_CATEGORIA
+        return context
+
     def form_valid(self, form):
         messages.success(self.request, f'Categoría "{form.instance.nombre}" creada.')
         return super().form_valid(form)
@@ -35,6 +40,11 @@ class CategoriaUpdateView(PanelStaffRequiredMixin, UpdateView):
     form_class = CategoriaForm
     template_name = "panel/categoria_form.html"
     success_url = reverse_lazy("menu_panel:categoria_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["iconos_disponibles"] = ICONOS_CATEGORIA
+        return context
 
     def form_valid(self, form):
         messages.success(self.request, f'Categoría "{form.instance.nombre}" actualizada.')

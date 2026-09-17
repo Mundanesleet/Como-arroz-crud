@@ -1,6 +1,28 @@
 from django.db import models
 from django.utils.text import slugify
 
+# Lista curada para el selector visual de íconos del panel (no bloquea
+# valores ya guardados: una categoría con un ícono fuera de esta lista
+# se sigue mostrando bien, solo no aparece marcada como "seleccionada").
+ICONOS_CATEGORIA = [
+    ("bi-egg-fried", "Arroces / frituras"),
+    ("bi-egg", "Huevo"),
+    ("bi-noodles", "Espaguetis / pastas"),
+    ("bi-fire", "Carnes a la parrilla"),
+    ("bi-list", "Hamburguesas"),
+    ("bi-circle", "Mazorcadas"),
+    ("bi-bowl-hot", "Sopas / Chop Suey"),
+    ("bi-cup-straw", "Bebidas frías"),
+    ("bi-cup-hot", "Bebidas calientes / café"),
+    ("bi-plus-circle", "Adicionales"),
+    ("bi-box2-heart", "Entradas"),
+    ("bi-basket2", "Ensaladas / acompañamientos"),
+    ("bi-cake2", "Postres"),
+    ("bi-cup", "Vasos / jugos"),
+    ("bi-bag-check", "Combos / promos"),
+    ("bi-shop", "Punto de venta"),
+]
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=60)

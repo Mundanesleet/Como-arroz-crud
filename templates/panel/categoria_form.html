@@ -5,7 +5,7 @@
     <h1>{% if object %}Editar categoría{% else %}Nueva categoría{% endif %}</h1>
 </div>
 
-<div class="panel-card" style="max-width: 520px;">
+<div class="panel-card" style="max-width: 640px;">
     <form method="post" novalidate>
         {% csrf_token %}
         {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
@@ -15,14 +15,28 @@
             {{ form.nombre }}
             {{ form.nombre.errors }}
         </div>
+
         <div class="mb-3">
-            <label class="form-label">Icono (Bootstrap Icons)</label>
+            <label class="form-label">Icono</label>
+            <p class="text-secondary small mb-2">Elige uno haciendo clic. No necesitas escribir ningún código.</p>
+
             {{ form.icono }}
             {{ form.icono.errors }}
+
+            <div class="selector-iconos" id="selectorIconos">
+                {% for valor, etiqueta in iconos_disponibles %}
+                <button type="button" class="icono-opcion" data-valor="{{ valor }}" title="{{ etiqueta }}">
+                    <i class="bi {{ valor }}"></i>
+                    <span>{{ etiqueta }}</span>
+                </button>
+                {% endfor %}
+            </div>
         </div>
+
         <div class="mb-3">
             <label class="form-label">Orden</label>
             {{ form.orden }}
+            <div class="form-text text-secondary">0 aparece primero, luego 1, 2, 3...</div>
         </div>
         <div class="form-check form-switch mb-3">
             {{ form.activa }}
@@ -35,4 +49,54 @@
         </div>
     </form>
 </div>
+
+<style>
+    .selector-iconos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .icono-opcion {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 8px;
+        background-color: var(--negro);
+        border: 1px solid var(--borde);
+        border-radius: 10px;
+        color: var(--blanco-suave);
+        cursor: pointer;
+        transition: 0.15s ease;
+    }
+    .icono-opcion i { font-size: 1.5rem; }
+    .icono-opcion span { font-size: 0.7rem; text-align: center; line-height: 1.2; }
+    .icono-opcion:hover { border-color: var(--rojo); background-color: var(--gris-oscuro); }
+    .icono-opcion.seleccionado {
+        border-color: var(--rojo);
+        background-color: var(--rojo);
+        color: var(--blanco);
+    }
+</style>
+
+<script>
+    (function () {
+        var input = document.getElementById("id_icono");
+        var valorActual = input.value;
+
+        document.querySelectorAll(".icono-opcion").forEach(function (boton) {
+            if (boton.dataset.valor === valorActual) {
+                boton.classList.add("seleccionado");
+            }
+            boton.addEventListener("click", function () {
+                document.querySelectorAll(".icono-opcion").forEach(function (b) {
+                    b.classList.remove("seleccionado");
+                });
+                boton.classList.add("seleccionado");
+                input.value = boton.dataset.valor;
+            });
+        });
+    })();
+</script>
 {% endblock %}

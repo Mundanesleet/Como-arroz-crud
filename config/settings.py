@@ -272,6 +272,51 @@ if not DEBUG:
 
 
 # ============================================================
+# LOGGING
+# ============================================================
+#
+# Sin este bloque, Django NO imprime ningún traceback en producción:
+# su handler de consola por defecto solo se activa con DEBUG=True, y no
+# hay ADMINS configurado para el envío de correo de errores. Resultado
+# real observado: un error 500 en Render no deja ningún rastro en los
+# logs, solo la página genérica "Server Error (500)". Este bloque fuerza
+# que cualquier excepción no controlada (incluida cualquier falla al
+# subir una imagen a Cloudinary) se imprima con su traceback completo a
+# stdout, que es justamente lo que Render captura como logs del servicio.
+# Django ya redacta automáticamente valores sensibles (SECRET_KEY,
+# password, api_key, token, etc.) en los tracebacks que genera.
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
+
+# ============================================================
 # LOGIN
 # ============================================================
 
